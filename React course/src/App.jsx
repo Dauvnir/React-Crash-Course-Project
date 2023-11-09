@@ -1,35 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {useState} from 'react';
+import Header from './components/Header';
+import Tasks from './components/Tasks';
+import AddTask from './components/AddTask';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
-
-export default App
+const App = () => {
+	const [showAddTask, setShowAddTask] = useState(false);
+	//state to stale informacje ktore nie wolno zmieniac ,a tylko update'owac , mozna je jako props wyslac do innych elementow by czerpac z  nich informacje (inaczej hook , mam jedzenie i rzucame kotwiczke do innego miejsca)
+	const [tasks, setTasks] = useState([
+		{
+			id: 1,
+			text: 'Food Shopping',
+			day: 'Feb 6th at 1:30pm',
+			reminder: true,
+		},
+		{
+			id: 2,
+			text: 'Gaming',
+			day: 'Nov 22th at 5:30pm',
+			reminder: false,
+		},
+		{
+			id: 3,
+			text: 'Swimming',
+			day: 'Feb 25th at 3:30pm',
+			reminder: true,
+		},
+	]);
+	// add task
+	const addTask = (task) => {
+		const id = Math.floor(Math.random() * 10000 + 1);
+		const newTask = {id, ...task};
+		setTasks([...tasks, newTask]);
+	};
+	//usuwanie taskow
+	const deleteTask = (id) => {
+		setTasks(tasks.filter((task) => task.id !== id));
+	};
+	// Toggle Reminder
+	const toggleReminder = (id) => {
+		setTasks(tasks.map((task) => (task.id === id ? {...task, reminder: !task.reminder} : task)));
+	};
+	return (
+		//przyklad props na dole kolo tasks= {}
+		//onDelete to przykladowa nazwa , mozesz  nazwac ja jako jajka nawet
+		//props to polaczenia miedzy elementami, jest to mozliwosc wyslanie pewnydh informacji
+		// laczenie js z html , sprawdzamy czy ilosc id'ikow jest wieksza od 0 jesli tak pokaze nie w innym przypadku pokaz komunikat
+		<div className="container">
+			<Header onAdd={() => setShowAddTask(!showAddTask)} showAdd={showAddTask} />
+			{showAddTask && <AddTask onAdd={addTask}></AddTask>}
+			{tasks.length > 0 ? (
+				<Tasks tasks={tasks} onDeletejajka={deleteTask} onDblClick={toggleReminder}></Tasks>
+			) : (
+				'No tasks to complete'
+			)}
+		</div>
+	);
+};
+export default App;
